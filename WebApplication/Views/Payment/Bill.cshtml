@@ -1,0 +1,69 @@
+﻿@model BillModel
+@{
+    ViewData["title"] = "Hoa don";
+}
+
+<div class="table-responsive">
+	<h3>Hóa đơn thanh toán</h3>
+	<div><b>Tên dịch vụ: </b>@Model.NameService</div>
+	<div><b>GIá dịch vụ: </b>@Model.SerVicePrice</div>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th scope="col">Tên Thuốc</th>
+				<th scope="col">Giá mỗi viên</th>
+				<th scope="col">Số lượng</th>
+			</tr>
+		</thead>
+		<tbody>
+			@if(Model.medicines != null)
+			{
+				@foreach (var item in Model.medicines)
+				{
+					<tr>
+						<td>@item.Name</td>
+						<td>@item.Price</td>
+						<td>@item.Quantity</td>
+					</tr>
+				}
+			}
+		</tbody>
+	</table>
+	<h5><b>Total : </b>@Model.Total</h5>
+	@if(Model.Status == "yes")
+	{
+		<h5><b>Đã thanh toán</b></h5>
+		<a class="btn btn-warning" asp-action="Index" asp-controller="Payment">Back</a>
+	}
+	else
+	{
+		@if(Model.statuspayment == "yes")
+		{
+			<h5><b>Tài khoản quý khách không đủ</b></h5>	
+		}
+		<a href ="/Payment/Transfer?customerid=@Model.CustomerId&total=@Model.Total&id=@Model.IdMedicalRecord&sequence=@Model.Sequence" class ="btn btn-success">Thanh toán</a>
+	}
+</div>
+
+@section Styles {
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" integrity="sha512-vKMx8UnXk60zUwyUnUPM3HbQo8QfmNx7+ltw8Pm5zLusl1XIfwcxo8DbWCqMGKaWeNxWA8yrx5v3SaVpMvR3CA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<!-- switchery css -->
+	<link rel="stylesheet" type="text/css" href="~/src/plugins/switchery/switchery.min.css">
+	<!-- bootstrap-tagsinput css -->
+	<link rel="stylesheet" type="text/css" href="~/src/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css">
+	<!-- bootstrap-touchspin css -->
+	<link rel="stylesheet" type="text/css" href="~/src/plugins/bootstrap-touchspin/jquery.bootstrap-touchspin.css">
+	<link rel="stylesheet" type="text/css" href="~/vendors/styles/style.css">
+}
+
+@section Scripts {
+	@* Toastr *@
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<!-- switchery js -->
+	<script src="~/src/plugins/switchery/switchery.min.js"></script>
+	<!-- bootstrap-tagsinput js -->
+	<script src="~/src/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js"></script>
+	<!-- bootstrap-touchspin js -->
+	<script src="~/src/plugins/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+	<script src="~/vendors/scripts/advanced-components.js"></script>
+}

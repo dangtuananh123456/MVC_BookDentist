@@ -1,0 +1,48 @@
+﻿@model PersonalScheduleModel
+
+@{
+    ViewData["Title"] = "Thêm lịch cá nhân";
+}
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Thêm lịch cá nhân</h4>
+                <form method="post" asp-action="CreatePersonalSchedule">
+                    <div class="form-group mb-3">
+                        <label class="form-control-label" asp-for="Date"></label>
+                        <input class="form-control" asp-for="Date">
+                        <span class="form-control-feedback text-danger" asp-validation-for="Date"></span>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-control-label" asp-for="StartTime"></label>
+                        <input class="form-control" asp-for="StartTime">
+                        <span class="form-control-feedback text-danger" asp-validation-for="StartTime"></span>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-control-label" asp-for="EndTime"></label>
+                        <input class="form-control" asp-for="EndTime">
+                        <span class="form-control-feedback text-danger" asp-validation-for="EndTime"></span>
+                    </div>
+                    
+                    <input class="form-control" type="hidden" asp-for="DentistId" value="@(ViewData["DentistId"] as string)">
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-success btn-block btn-rounded">
+                                Thêm lịch
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <a asp-controller="Schedule" asp-action="ListAppointmentSchedules" asp-route-dentistId="@(ViewData["DentistId"] as string)" type="button" class="btn btn-danger btn-block btn-rounded">
+                                Thoát
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+         

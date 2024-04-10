@@ -1,0 +1,64 @@
+﻿
+@{
+    ViewData["Title"] = "Thanh toán";
+}
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="form-group mb-3">
+                    <label class="form-control-label">Số điện thoại khách hàng</label>
+                    <select id="phonenumber" class="form-control">
+                        @foreach(var item in ViewBag.list)
+                        {
+                            <option value = "@item.Value">@item.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                        <button type="button" class="btn btn-success btn-block btn-rounded" id="submit">
+                            Xác nhận
+                        </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="viewMedicalRecord"></div>
+</div>
+
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" integrity="sha512-vKMx8UnXk60zUwyUnUPM3HbQo8QfmNx7+ltw8Pm5zLusl1XIfwcxo8DbWCqMGKaWeNxWA8yrx5v3SaVpMvR3CA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- switchery css -->
+    <link rel="stylesheet" type="text/css" href="~/src/plugins/switchery/switchery.min.css">
+    <!-- bootstrap-tagsinput css -->
+    <link rel="stylesheet" type="text/css" href="~/src/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css">
+    <!-- bootstrap-touchspin css -->
+    <link rel="stylesheet" type="text/css" href="~/src/plugins/bootstrap-touchspin/jquery.bootstrap-touchspin.css">
+    <link rel="stylesheet" type="text/css" href="~/vendors/styles/style.css">
+}
+
+
+@section Scripts{
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- switchery js -->
+    <script src="~/src/plugins/switchery/switchery.min.js"></script>
+    <!-- bootstrap-tagsinput js -->
+    <script src="~/src/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js"></script>
+    <!-- bootstrap-touchspin js -->
+    <script src="~/src/plugins/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+    <script src="~/vendors/scripts/advanced-components.js"></script>
+    <script type="module">
+        $(document).ready(function() {
+            $("#submit").click(async() => {
+                let customerId = $("#phonenumber").val();
+                console.log("customer id => ", customerId)
+                location.href = `/Payment/Bill?customerId=${customerId}&statuspayment=no`;
+            })
+        })
+    </script>
+
+}

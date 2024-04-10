@@ -1,0 +1,131 @@
+﻿@using DataModels
+@model IEnumerable<CreateMedicineModel>
+
+@{
+	ViewData["Title"] = "Thuốc trong kho";
+}
+
+<div class="row">
+	<div class="col-md-4 col-sm-12">
+		<a class="btn btn-success mb-3 text-light" asp-controller="Medicine" asp-action="Create">
+			<span class="mx-1">Thêm thuốc</span>
+		</a>
+	</div>
+	<form class="col-md-8 col-sm-12 row" method="post" asp-action="Index">
+		<div class="form-group col-8">
+			<input value="@ViewData["Text"]" name="text" type="text" class="form-control" placeholder="Tìm thuốc theo tên">
+		</div>
+		<button type="submit" class="btn btn-danger mb-4 text-light col-4">Tìm kiếm</button>
+	</form>
+</div>
+
+<div class="row">
+	<div class="alert alert-primary mx-3">Số lượng thuốc tìm được: @ViewData["Count"]</div>
+</div>
+
+<div class="table-responsive">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th class="table-plus datatable-nosort">ID</th>
+				<th scope="col">Tên thuốc</th>
+				<th scope="col">Chỉ định</th>
+				<th scope="col">Giá</th>
+				<th scope="col"></th>
+				<th scope="col"></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var medicine in Model)
+			{
+				<tr id="row-@medicine.Id">
+					<td class="table-plus">@medicine.Id</td>
+					<td>@medicine.Name</td>
+					<td>@medicine.Prescription</td>
+					<td>@medicine.Price VNĐ</td>
+					<td>
+						<a class="btn btn-warning text-light" asp-controller="Medicine" asp-action="Edit" asp-route-id="@medicine.Id">
+							<i class="icon-copy fa fa-edit" aria-hidden="true"></i>
+						</a>
+					</td>
+					<td>
+						<button data-id="@medicine.Id" type="button" class="btn btn-danger text-light delete-confirm-btn">
+							<i class="icon-copy fa fa-trash-o" aria-hidden="true"></i>
+						</button>
+					</td>
+				</tr>
+
+
+			}
+		</tbody>
+	</table>
+</div>
+
+<div class="modal fade" id="confirmation-modal" tabindex="-1" role="dialog" style="display: none" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-body text-center font-18">
+				<h4 class="padding-top-30 mb-30 weight-500">Are you sure you want to delete this medicine?</h4>
+				<div class="padding-bottom-30 row" style="max-width: 170px; margin: 0 auto;">
+					<div class="col-6">
+						<button type="button" class="btn btn-secondary border-radius-100 btn-block confirmation-btn" data-dismiss="modal"><i class="fa fa-times"></i></button>
+						NO
+					</div>
+					<div class="col-6">
+						<button type="button" class="btn btn-primary border-radius-100 btn-block confirmation-btn yes-btn" data-dismiss="modal"><i class="fa fa-check"></i></button>
+						YES
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+@section Styles {
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" integrity="sha512-vKMx8UnXk60zUwyUnUPM3HbQo8QfmNx7+ltw8Pm5zLusl1XIfwcxo8DbWCqMGKaWeNxWA8yrx5v3SaVpMvR3CA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+}
+
+@section Scripts {
+	@* Toastr *@
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+	<script type = "module">
+		$(document).ready(function () {
+			$('.delete-confirm-btn').on('click', function () {
+				let id = $(this).attr('data-id');
+				showModal(id);
+				$('#confirmation-modal .yes-btn').off('click').on('click', function () {
+					hideModal();
+					$.ajax({
+						url: '@Url.Action("Delete", "Medicine")',
+						type: 'POST',
+						contentType: 'application/x-www-form-urlencoded',
+						data: { id: id },
+						success: function (data) {
+							$(`#row-${id}`).remove();
+							toastr.success(data, 'Notification', { timeOut: 2000 });
+						},
+						error: function (error) {
+							console.log(error)
+							toastr.error(error.responseText, 'Notification', { timeOut: 2000 });
+						}
+					});
+				});
+			});
+
+			function showModal(id) {
+				let modal = $('#confirmation-modal');
+				modal.attr('data-id', id);
+				modal.modal('show');
+			}
+			function hideModal() {
+				let modal = $('#confirmation-modal');
+				modal.attr('data-id', '');
+				modal.modal('hide');
+			}
+
+		});
+	</script>
+}

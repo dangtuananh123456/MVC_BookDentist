@@ -1,0 +1,49 @@
+﻿
+
+@{
+	ViewData["Title"] = "Danh sách lịch hẹn";
+}
+
+<div class="row m-3">
+	<div class="col-6 form-group d-flex align-items-center">
+		<label class="form-label col-3">Chọn ngày hẹn</label>
+		<input id="appointmentDate" type="date" class="form-control" />
+	</div>
+	<div class="col-5">
+		<button type="button" id="submitDateBtn" class="btn btn-danger">Xem lịch hẹn</button>
+	</div>
+</div>
+
+<a class="btn btn-success mb-3 text-light" asp-controller="Schedule" asp-action="CreatePersonalSchedule" asp-route-dentistId="@(ViewData["DentistId"] as string)">
+	<i class="icon-copy fa fa-plus-square-o" aria-hidden="true"></i>
+	<span class="mx-1">Thêm lịch cá nhân</span>
+</a>
+
+<div id="scheduleTable">
+
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('#submitDateBtn').on('click', function () {
+                let appointmentDate = $("#appointmentDate").val();
+                
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("GetAppointmentsByDate", "Schedule")',
+                    data: { date: appointmentDate, dentistId: '@(ViewData["DentistId"] as string)' },
+                    success: function (response) {
+                        $('#scheduleTable').empty();
+                        $('#scheduleTable').html(response);
+                    },
+                    error: function (error) {
+                        console.error("Error:", error);
+                    }
+                });
+            });
+        });
+
+       
+    </script>
+}

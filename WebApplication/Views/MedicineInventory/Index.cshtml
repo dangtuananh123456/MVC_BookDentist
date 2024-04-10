@@ -1,0 +1,201 @@
+﻿@using Repositories
+@using DataModels
+
+@model IEnumerable<DataModels.MedicineInventoryModel>
+@inject MedicineRepository MedicineRepository
+@{
+	ViewData["Title"] = "Thuốc trong kho";
+}
+
+
+
+<div class="table-responsive">
+	<a class="btn btn-success mb-3 text-light" asp-controller="MedicineInventory" asp-action="Create">
+		<i class="icon-copy fa fa-plus-square-o" aria-hidden="true"></i>
+		<span class="mx-1">Thêm thuốc vào kho</span>
+	</a>
+
+	<a class="btn btn-danger mb-3 text-light" asp-controller="MedicineInventory" asp-action="DeleteAllExpirededicine">
+		<i class="icon-copy fa fa-trash-o" aria-hidden="true"></i>
+		<span class="mx-1">Xóa tất cả thuốc hết hạn</span>
+	</a>
+
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th class="table-plus datatable-nosort">ID</th>
+				<th>Tên thuốc</th>
+				<th>Ngày hết hạn</th>
+				<th>Số lượng trong kho</th>
+				<th>Đơn vị</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model)
+			{
+				<tr id="row-@item.Id">
+					<td class="table-plus">@item.Id</td>
+					<td>
+						 @item.NameMedicine
+					</td>
+					<td>@item.ExpiryDate</td>
+					<td>
+						<span class="mx-3 medQuantity">@item.InventoryQuantity</span>
+						<button type="button" class="badge bg-success border-0 text-light increaseBtn" data-id="@item.Id">
+							<i class="icon-copy fa fa-plus" aria-hidden="true"></i>
+						</button>
+						<button type="button" class="badge bg-danger border-0 text-light decreaseBtn" data-id="@item.Id">
+							<i class="icon-copy fa fa-minus" aria-hidden="true"></i>
+						</button>	
+					</td>
+					<td>@item.Unit</td>
+					<td>
+						<a class="btn btn-warning text-light" asp-controller="MedicineInventory" asp-action="Edit" asp-route-id="@item.Id">
+							<i class="icon-copy fa fa-edit" aria-hidden="true"></i>
+						</a>
+						<button data-id="@item.Id" type="button" class="btn btn-danger text-light delete-confirm-btn">
+							<i class="icon-copy fa fa-trash-o" aria-hidden="true"></i>
+						</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</div>
+
+<div class="modal fade" id="confirmation-modal" tabindex="-1" role="dialog" style="display: none" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-body text-center font-18">
+				<h4 class="padding-top-30 mb-30 weight-500">Bạn có chắc chắn muốn xóa thuốc này khỏi kho không?</h4>
+				<div class="padding-bottom-30 row" style="max-width: 170px; margin: 0 auto;">
+					<div class="col-6">
+						<button type="button" class="btn btn-secondary border-radius-100 btn-block confirmation-btn" data-dismiss="modal"><i class="fa fa-times"></i></button>
+						NO
+					</div>
+					<div class="col-6">
+						<button type="button" class="btn btn-primary border-radius-100 btn-block confirmation-btn yes-btn" data-dismiss="modal"><i class="fa fa-check"></i></button>
+						YES
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!-- js -->
+<script src="~/vendors/scripts/core.js"></script>
+<script src="~/vendors/scripts/script.min.js"></script>
+<script src="~/vendors/scripts/process.js"></script>
+<script src="~/vendors/scripts/layout-settings.js"></script>
+<script src="~/src/plugins/datatables/js/jquery.dataTables.min.js"></script>
+<script src="~/src/plugins/datatables/js/dataTables.bootstrap4.min.js"></script>
+<script src="~/src/plugins/datatables/js/dataTables.responsive.min.js"></script>
+<script src="~/src/plugins/datatables/js/responsive.bootstrap4.min.js"></script>
+<!-- buttons for Export datatable -->
+<script src="~/src/plugins/datatables/js/dataTables.buttons.min.js"></script>
+<script src="~/src/plugins/datatables/js/buttons.bootstrap4.min.js"></script>
+<script src="~/src/plugins/datatables/js/buttons.print.min.js"></script>
+<script src="~/src/plugins/datatables/js/buttons.html5.min.js"></script>
+<script src="~/src/plugins/datatables/js/buttons.flash.min.js"></script>
+<script src="~/src/plugins/datatables/js/pdfmake.min.js"></script>
+<script src="~/src/plugins/datatables/js/vfs_fonts.js"></script>
+<!-- Datatable Setting js -->
+<script src="~/vendors/scripts/datatable-setting.js"></script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+@section Styles {
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" integrity="sha512-vKMx8UnXk60zUwyUnUPM3HbQo8QfmNx7+ltw8Pm5zLusl1XIfwcxo8DbWCqMGKaWeNxWA8yrx5v3SaVpMvR3CA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+}
+
+@section Scripts {
+	@* Toastr *@
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+	<script type="module">
+		$(document).ready(function () {
+			$('.delete-confirm-btn').on('click', function () {
+				let id = $(this).attr('data-id');
+				showModal(id);
+				$('#confirmation-modal .yes-btn').off('click').on('click', function () {
+					hideModal();
+					$.ajax({
+						url: '@Url.Action("Delete", "MedicineInventory")',
+						type: 'POST',
+						contentType: 'application/x-www-form-urlencoded',
+						data: { id: id },
+						success: function (data) {
+							$(`#row-${id}`).remove();
+							toastr.success(data, 'Notification', { timeOut: 2000 });
+						},
+						error: function (error) {
+							toastr.error(error.responseText, 'Notification', { timeOut: 2000 });
+						}
+					});
+				});
+			});
+
+			$('.increaseBtn').on('click', function () {
+				let id = $(this).attr('data-id');
+				const quantityElem = $(this).siblings('.medQuantity');
+				console.log(quantityElem)
+				$.ajax({
+					url: '@Url.Action("IncreaseMedicine", "MedicineInventory")',
+					type: 'POST',
+					contentType: 'application/x-www-form-urlencoded',
+					data: { id: id },
+					success: function (data) {
+						quantityElem.html(data);
+					},
+					error: function (error) {
+						toastr.error(error.responseText, 'Notification', { timeOut: 2000 });
+					}
+				});
+			});
+
+			$('.decreaseBtn').on('click', function () {
+				let id = $(this).attr('data-id');
+				const quantityElem = $(this).siblings('.medQuantity');
+				console.log(quantityElem)
+				$.ajax({
+					url: '@Url.Action("DecreaseMedicine", "MedicineInventory")',
+					type: 'POST',
+					contentType: 'application/x-www-form-urlencoded',
+					data: { id: id },
+					success: function (data) {
+						quantityElem.html(data);
+					},
+					error: function (error) {
+						toastr.error(error.responseText, 'Notification', { timeOut: 2000 });
+					}
+				});
+			});
+
+			function showModal(id) {
+				let modal = $('#confirmation-modal');
+				modal.attr('data-id', id);
+				modal.modal('show');
+			}
+			function hideModal() {
+				let modal = $('#confirmation-modal');
+				modal.attr('data-id', '');
+				modal.modal('hide');
+			}
+		});
+	</script>
+	@if (TempData["Err"] != null)
+	{
+		<script>
+			toastr.error('@TempData["Err"]', { timeOut: 2000 });
+		</script>
+	}
+	@if (TempData["Success"] != null)
+	{
+		<script>
+			toastr.success('@TempData["Success"]', { timeOut: 2000 });
+		</script>
+	}
+}

@@ -1,0 +1,86 @@
+﻿
+@using DataModels
+@model List<(Medicine, int)>
+
+<div>
+    <input type="hidden" id="id" value="@ViewBag.id"/>
+    <input type="hidden" id="sequence" value="@ViewBag.sequence" />
+    <div id="listMedicine">
+        <div class="item mb-3">
+            <label>Loại thuốc : </label>
+            <select class ="medicine" style = "height : 50px; width : 200px">
+                @for(int i = 0;i < Model.Count; i++)
+                {
+                    <option value ="@Model[i].Item1.Id @Model[i].Item2">@Model[i].Item1.Name (Max = @Model[i].Item2)</option>
+                }
+            </select>
+            <label>Số lượng : </label>
+            <input class="quantity" placeholder="Nhập số lượng"/>
+            <span class="error" style="color:red"></span>
+        </div>
+    </div>
+    <button type ="button" class="btn btn-danger text-light" id="addMedicine">Thêm thuốc</button>
+    <button type ="button" class = "btn btn-warning text-light" id="submit">Submit</button>
+</div>
+
+@section Scripts {
+	<script type="module">
+        $("#addMedicine").click(() => {
+            $("#listMedicine").append(`
+                <div class="item mb-3">
+                    <label>Loại thuốc : </label>
+                    <select class ="medicine" style = "height : 50px; width : 200px">
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        <option value ="@Model[i].Item1.Id">@Model[i].Item1.Name (Max = @Model[i].Item2)</option>
+                    }
+                    </select>
+                    <label>Số lượng : </label>
+                    <input class="quantity" placeholder="Nhập số lượng"/>
+                    <span class="error" style="color:red"></span>
+                </div>
+            `)
+        })
+        $("#submit").click( async () => {
+            let id = $("#id").val();
+            let sequence = $("#sequence").val();
+            let listMed = $(".medicine");
+            let listQuantity = $(".quantity");
+            let listError = $(".error");
+            let result = [];
+            let check = true;
+            for (let i = 0; i < listMed.length; i++) {
+                let med = listMed.eq(i);
+                let qua = listQuantity.eq(i);
+                let err = listError.eq(i);
+                let split = med.val().split(" ");
+                let idMed = split[0];
+                let quaMed = parseInt(split[1]);
+                if (quaMed < parseInt(qua.val())) {
+                    err.html(`Số lượng thuốc này không được vượt quá ${quaMed} viên`);
+                    check = false;
+                    break;
+                }
+                result.push({ medicineId: idMed, quantity : qua.val()})
+            }
+            console.log("list medicine => ", result); 
+            if (check === true) {
+                $.ajax({
+                    url: '@Url.Action("Create", "Prescription")',
+                    type: 'POST',
+                    contentType: 'application/x-www-form-urlencoded',
+                    data: { id: id, sequence: sequence, numberMedicines  : result},
+                    success: function (data) {
+                        console.log(data);
+                        location.href = `/Prescription/Index?id=${id}&sequence=${sequence}`
+                    },
+                    error: function (error) {
+                        console.log(error)
+                        toastr.error(error.responseText, 'Notification', { timeOut: 2000 });
+                    }
+                });
+            }
+        })
+
+	</script>
+}

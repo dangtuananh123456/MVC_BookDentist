@@ -1,0 +1,183 @@
+﻿@using DataModels
+@model IEnumerable<ListUsersModel>
+
+@{
+	ViewData["Title"] = "Danh sách User";
+}
+
+<a class="btn btn-success mb-3 text-light" asp-controller="Administration" asp-action="CreateUser">
+	<i class="icon-copy fa fa-plus-square-o" aria-hidden="true"></i>
+	<span class="mx-1">Tạo User mới</span>
+</a>
+<div class="table-responsive">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th scope="col">Tên đăng nhập</th>
+				<th scope="col">Họ và tên</th>
+				<th scope="col">Số điện thoại</th>
+				<th scope="col">Chức vụ</th>
+				<th scope="col"></th>
+				<th scope="col">Tình trạng tài khoản (Khóa)</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var user in Model)
+			{
+				<tr id="row-@user.Id">
+					<td>@user.UserName</td>
+					<td>@user.FullName</td>
+					<td>@user.PhoneNumber</td>
+					<td>
+						@if (user.Role == "Dentist")
+						{
+							<text>Nha sĩ</text>
+						}
+						else if (user.Role == "Employee")
+						{
+							<text>Nhân viên</text>
+						}
+						else if (user.Role == "Customer")
+						{
+							<text>Khách hàng</text>
+						}
+					</td>
+					
+					<td>
+						<a class="btn btn-warning text-light" asp-controller="Administration" asp-action="EditUser" asp-route-id="@user.Id">
+						<i class="icon-copy fa fa-edit" aria-hidden="true"></i>
+						</a>
+						<button data-id="@user.Id" type="button" class="btn btn-danger text-light delete-confirm-btn">
+							<i class="icon-copy fa fa-trash-o" aria-hidden="true"></i>
+						</button>
+						@if (user.Role == "Customer")
+						{
+							<a class="btn btn-info text-light" asp-controller="Administration" asp-action="ViewCustomerDetail" asp-route-customerName="@user.FullName">
+								<i class="icon-copy fa fa-vcard-o" aria-hidden="true"></i>
+							</a>
+						}
+						
+					</td>
+					@{
+						string checkAttr = "";
+						if (!user.IsLocked)
+						{
+							checkAttr = "checked";
+						}
+					}
+					<td>
+							<input type="checkbox" @checkAttr
+								class="switch-btn lock-btn"
+								data-color="rgb(40, 167, 69)"
+								data-size="small"
+								data-switchery="true"
+								data-id="@user.Id">
+					</td>
+				</tr>
+				
+
+			}
+		</tbody>
+	</table>
+</div>
+
+<div class="modal fade" id="confirmation-modal" tabindex="-1" role="dialog" style="display: none" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-body text-center font-18">
+				<h4 class="padding-top-30 mb-30 weight-500">Bạn có chắc chắn muốn xóa user này?</h4>
+				<div class="padding-bottom-30 row" style="max-width: 170px; margin: 0 auto;">
+					<div class="col-6">
+						<button type="button" class="btn btn-secondary border-radius-100 btn-block confirmation-btn" data-dismiss="modal"><i class="fa fa-times"></i></button>
+						HỦY
+					</div>
+					<div class="col-6">
+						<button type="button" class="btn btn-primary border-radius-100 btn-block confirmation-btn yes-btn" data-dismiss="modal"><i class="fa fa-check"></i></button>
+						XÓA
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+@section Styles {
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" integrity="sha512-vKMx8UnXk60zUwyUnUPM3HbQo8QfmNx7+ltw8Pm5zLusl1XIfwcxo8DbWCqMGKaWeNxWA8yrx5v3SaVpMvR3CA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<!-- switchery css -->
+	<link rel="stylesheet" type="text/css" href="~/src/plugins/switchery/switchery.min.css">
+	<!-- bootstrap-tagsinput css -->
+	<link rel="stylesheet" type="text/css" href="~/src/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css">
+	<!-- bootstrap-touchspin css -->
+	<link rel="stylesheet" type="text/css" href="~/src/plugins/bootstrap-touchspin/jquery.bootstrap-touchspin.css">
+	<link rel="stylesheet" type="text/css" href="~/vendors/styles/style.css">
+}
+
+@section Scripts {
+	@* Toastr *@
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<!-- switchery js -->
+	<script src="~/src/plugins/switchery/switchery.min.js"></script>
+	<!-- bootstrap-tagsinput js -->
+	<script src="~/src/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js"></script>
+	<!-- bootstrap-touchspin js -->
+	<script src="~/src/plugins/bootstrap-touchspin/jquery.bootstrap-touchspin.js"></script>
+	<script src="~/vendors/scripts/advanced-components.js"></script>
+	<script>
+		$(document).ready(function () {
+			$('.delete-confirm-btn').on('click', function () {
+				let id = $(this).attr('data-id');
+				showModal(id);
+				$('#confirmation-modal .yes-btn').off('click').on('click', function () {
+					hideModal();
+					$.ajax({
+						url: '@Url.Action("DeleteUser", "Administration")',
+						type: 'POST',
+						contentType: 'application/x-www-form-urlencoded',
+						data: { id: id },
+						success: function (data) {
+							$(`#row-${id}`).remove();
+							toastr.success(data, 'Notification', { timeOut: 2000 });
+						},
+						error: function (error) {
+							console.log(error)
+							toastr.error(error.responseText, 'Notification', { timeOut: 2000 });
+						}
+					});
+
+				});
+			});
+
+			function showModal(id) {
+				let modal = $('#confirmation-modal');
+				modal.attr('data-id', id);
+				modal.modal('show');
+			}
+			function hideModal() {
+				let modal = $('#confirmation-modal');
+				modal.attr('data-id', '');
+				modal.modal('hide');
+			}
+
+			$('.lock-btn').on('change', function () {
+				let id = $(this).attr('data-id');
+				let active = this.checked;
+				$.ajax({
+					url: '@Url.Action("LockOrUnlockUser", "Administration")',
+					type: 'POST',
+					contentType: 'application/x-www-form-urlencoded',
+					data: { id: id, active: active },
+					success: function (data) {
+
+					},
+					error: function (error) {
+						console.log(error)
+						toastr.error(error.responseText, 'Notification', { timeOut: 2000 });
+					}
+				});
+			});
+			
+		
+		});
+	</script>
+}

@@ -1,0 +1,31 @@
+﻿
+@model PhoneModel;
+
+@{
+    ViewData["Title"] = "Create New Medicine";
+}
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Add Medicine</h4>
+                <div class="text-danger" asp-validation-summary="All"></div>
+                <form method="post" asp-action="MedicalRecord" asp-controller="Payment">
+                    <div class="form-group mb-3">
+                        <label class="form-control-label" asp-for="PhoneNumber"></label>
+                        <input class="form-control"  asp-for="PhoneNumber">
+                        <span class="form-control-feedback text-danger" asp-validation-for="PhoneNumber"></span>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-success btn-block btn-rounded">
+                                Submit
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

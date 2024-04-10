@@ -1,0 +1,42 @@
+﻿
+@using Repositories
+@model InformationPrescriptionModel
+
+<div>
+    <h1>Prescription here</h1>
+    @if(ViewBag.check)
+    {
+        <h1>Da ke don thuoc</h1>
+        <div><b>Tên khách hàng: </b>@Model.customer.FullName</div>
+        <h2>Thông tin đơn thuốc</h2>       
+        <div><b>Lần khám thứ : </b>@Model.medicalRecord.SequenceNumber</div>
+        <div><b>Dịch vụ khám: </b>@Model.medicalRecord.Service ( @Model.medicalRecord.ServicePrice VNĐ)</div>
+        <div><b>Ngày khám : </b>@Model.medicalRecord.ExaminationDate</div>
+        <h4>Danh sách thuốc:</h4>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th class="table-plus datatable-nosort">ID</th>
+					<th scope="col">Tên thuốc</th>
+					<th scope="col">Giá / viên</th>
+					<th scope="col">Số lượng</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model.listMedicine)
+				{
+					<tr id="row-@item.medicine.Id">
+						<td class="table-plus">@item.medicine.Id</td>
+						<td>@item.medicine.Name</td>
+						<td>@item.medicine.Price</td>
+						<td>@item.medicine_MedicalRecord.MedicineQuantity</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+    }
+    else{
+        <h1>Chua ke don</h1>
+        <a class="btn btn-warning text-light" href = "/Prescription/Create?id=@ViewBag.id&sequence=@ViewBag.sequence">Ke don</a>
+    }
+</div>

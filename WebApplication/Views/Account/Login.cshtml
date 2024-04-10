@@ -1,0 +1,45 @@
+﻿@model LoginModel
+
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Đăng nhập</h4>
+                <div class="text-danger" asp-validation-summary="All"></div>
+                <form method="post">
+                    <div class="form-group mb-3">
+                        <label class="form-control-label" asp-for="UserName"></label>
+                        <input class="form-control" asp-for="UserName">
+                        <span class="form-control-feedback text-danger" asp-validation-for="UserName"></span>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-control-label" asp-for="Password"></label>
+                        <input class="form-control" asp-for="Password">
+                        <span class="form-control-feedback text-danger" asp-validation-for="Password"></span>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-5" style="display: none">
+                        <label asp-for="RememberMe" class="custom-control-label"></label>
+                        <input asp-for="RememberMe" class="custom-control-input">
+                    </div>
+ 
+                    
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-success btn-block btn-rounded">
+                                Đăng nhập
+                            </button>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <div>Bạn chưa có tài khoản? <a asp-action="Register" class="text-success">Đăng ký tài khoản mới</a></div>
+                    </div>
+                    <input type="hidden" name="ReturnUrl" value="@ViewData["ReturnUrl"]" />
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

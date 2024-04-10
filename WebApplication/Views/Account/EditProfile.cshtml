@@ -1,0 +1,52 @@
+﻿@model EditProfileModel
+
+@{
+    ViewData["Title"] = "Thông tin cá nhân";
+}
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Thông tin cá nhân</h4>
+                <div class="text-danger" asp-validation-summary="All"></div>
+                <form method="post" asp-controller="Account" asp-action="EditProfile">
+  
+                   
+                    @if (Model.FullName != null)
+                    {
+                        <div class="form-group mb-3">
+                            <label class="form-control-label" asp-for="FullName"></label>
+                            <input class="form-control" asp-for="FullName">
+                            <span class="form-control-feedback text-danger" asp-validation-for="FullName"></span>
+                        </div>
+                    }
+                    @if (Model.Address != null)
+                    {
+                        <div class="form-group mb-3">
+                            <label class="form-control-label" asp-for="Address"></label>
+                            <input class="form-control" asp-for="Address">
+                            <span class="form-control-feedback text-danger" asp-validation-for="Address"></span>
+                        </div>
+                    }
+                    @if (Model.DayOfBirth != null)
+                    {
+                        <div class="form-group mb-3">
+                            <label class="form-control-label" asp-for="DayOfBirth"></label>
+                            <input class="form-control" asp-for="DayOfBirth">
+                            <span class="form-control-feedback text-danger" asp-validation-for="DayOfBirth"></span>
+                        </div>
+                    }
+                    <input type="hidden" class="form-control" name="id" value="@Model.Id">
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-warning btn-block btn-rounded">
+                                Lưu thay đổi
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

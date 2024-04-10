@@ -1,0 +1,51 @@
+﻿@model MedicineInventoryModel
+
+@{
+    ViewData["Title"] = "Nhập thuốc vào kho";
+}
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Nhập thuốc vào kho</h4>
+                <div class="text-danger" asp-validation-summary="All"></div>
+                <form method="post">
+                    <div class="form-group">
+                        <label asp-for="MedicineId"></label>
+                        <div class="dropdown bootstrap-select form-control">
+                            <select asp-for="MedicineId" asp-items="@(ViewData["ListMidicine"] as List<SelectListItem>)"
+                                    class="selectpicker form-control"
+                                    data-style="btn-outline-primary"
+                                    data-size="5" tabindex="-98">
+                                <option>Chọn thuốc</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-control-label" asp-for="ExpiryDate"></label>
+                        <input class="form-control" type ="date" asp-for="ExpiryDate">
+                        <span class="form-control-feedback text-danger" asp-validation-for="ExpiryDate"></span>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-control-label" asp-for="InventoryQuantity"></label>
+                        <input class="form-control" asp-for="InventoryQuantity">
+                        <span class="form-control-feedback text-danger" asp-validation-for="InventoryQuantity"></span>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-success btn-block btn-rounded">
+                                Thêm
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <a asp-controller="MedicineInventory" asp-action="Index" type="button" class="btn btn-danger btn-block btn-rounded">
+                                Thoát
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

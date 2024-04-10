@@ -1,0 +1,58 @@
+﻿@model RegisterModel
+
+@{
+    ViewData["Title"] = "Đăng ký";
+}
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Đăng ký</h4>
+                <div class="text-danger" asp-validation-summary="All"></div>
+                <form method="post" asp-controller="Account" asp-action="Register">
+                    <div class="form-group mb-3">
+                        <label class="form-control-label" asp-for="PhoneNumber"></label>
+                        <input class="form-control" asp-for="PhoneNumber">
+                        <span class="form-control-feedback text-danger" asp-validation-for="PhoneNumber"></span>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-control-label" asp-for="Password"></label>
+                        <input class="form-control" asp-for="Password">
+                        <span class="form-control-feedback text-danger" asp-validation-for="Password"></span>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-control-label" asp-for="ConfirmPassword"></label>
+                        <input class="form-control" asp-for="ConfirmPassword">
+                        <span class="form-control-feedback text-danger" asp-validation-for="ConfirmPassword"></span>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-control-label" asp-for="FullName"></label>
+                        <input class="form-control" asp-for="FullName">
+                        <span class="form-control-feedback text-danger" asp-validation-for="FullName"></span>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-control-label" asp-for="Address"></label>
+                        <input class="form-control" asp-for="Address">
+                        <span class="form-control-feedback text-danger" asp-validation-for="Address"></span>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="form-control-label" asp-for="DayOfBirth"></label>
+                        <input class="form-control" asp-for="DayOfBirth">
+                        <span class="form-control-feedback text-danger" asp-validation-for="DayOfBirth"></span>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-success btn-block btn-rounded">
+                                Đăng ký
+                            </button>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <div>Bạn đã có tài khoản? <a asp-action="Login" class="text-success">Đăng nhập</a></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

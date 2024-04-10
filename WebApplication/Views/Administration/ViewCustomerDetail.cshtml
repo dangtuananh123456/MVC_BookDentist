@@ -1,0 +1,51 @@
+﻿@model CustomerModel
+
+<div class="card-body">
+    <div class="row">
+        <div class="col-sm-3">
+            <p class="mb-0">Họ và tên</p>
+        </div>
+        <div class="col-sm-9">
+            <p class="text-muted mb-0">@Model.FullName</p>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-sm-3">
+            <p class="mb-0">Số điện thoại</p>
+        </div>
+        <div class="col-sm-9">
+            <p class="text-muted mb-0">@Model.PhoneNumber</p>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-sm-3">
+            <p class="mb-0">Ngày sinh</p>
+        </div>
+        <div class="col-sm-9">
+            <p class="text-muted mb-0">@Model.DayOfBirth.ToString("dd-MM-yyyy")</p>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-sm-3">
+            <p class="mb-0">Địa chỉ</p>
+        </div>
+        <div class="col-sm-9">
+            <p class="text-muted mb-0">@Model.Address</p>
+        </div>
+    </div>
+    <hr>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+}
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        toastr.success('@ViewBag.Notification');
+    </script>
+}

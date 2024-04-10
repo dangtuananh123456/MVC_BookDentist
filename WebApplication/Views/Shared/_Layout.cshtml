@@ -1,0 +1,177 @@
+﻿@using DataModels
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+@inject Repositories.CustomerRepository CustomerRepository
+@inject Repositories.DentistRepository DentistRepository
+@inject Repositories.CreditRepository CreditRepository
+
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Basic Page Info -->
+    <meta charset="utf-8">
+    <title>@ViewData["Title"]</title>
+
+    <!-- Site favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="~/vendors/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/vendors/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/vendors/images/favicon-16x16.png">
+
+    <!-- Mobile Specific Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="~/vendors/styles/core.css">
+    <link rel="stylesheet" type="text/css" href="~/vendors/styles/icon-font.min.css">
+    <link rel="stylesheet" type="text/css" href="~/src/plugins/datatables/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="~/src/plugins/datatables/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="~/vendors/styles/style.css">
+    @await RenderSectionAsync("Styles", required: false)
+    @* Toastr *@
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119386393-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-119386393-1');
+    </script>
+</head>
+<body>
+    <div class="header" style="height: 80px;">
+            
+        <div class="d-flex flex-row align-items-center row px-3">
+            <a class="btn btn-success d-flex align-items-center mx-2 btn-sm" asp-controller="Home" asp-action="Index" class="dropdown-toggle no-arrow">
+                Trang chủ
+            </a>
+
+            @if (SignInManager.IsSignedIn(User))
+            {
+
+                if (User.IsInRole("Admin"))
+                {
+
+                    <a class="btn btn-success d-flex align-items-center mx-2 btn-sm" asp-controller="Administration" asp-action="ListUsers" class="dropdown-toggle no-arrow">
+                        Quản lý User
+                    </a>
+
+
+                    <a class="btn btn-success d-flex align-items-center mx-2 btn-sm" asp-controller="Medicine" asp-action="Index" class="dropdown-toggle no-arrow">
+                        Quản lý thuốc
+                    </a>
+
+                    <a class="btn btn-success d-flex align-items-center mx-2 btn-sm" asp-controller="MedicineInventory" asp-action="Index" class="dropdown-toggle no-arrow">
+                        Kho thuốc
+                    </a>
+                }
+
+            }
+
+            @if (SignInManager.IsSignedIn(User))
+            {
+                if (User.IsInRole("Customer"))
+                {
+                    var customer = await UserManager.GetUserAsync(User);
+                    var customerId = (await CustomerRepository.GetCustomerByAccountAsync(customer)).Id;
+                    <a class="btn btn-info d-flex align-items-center mx-2 btn-sm" asp-controller="Schedule" asp-action="MakeAppointment" asp-route-customerId="@customerId">
+                        Đặt lịch hẹn
+                    </a>
+                    <a class="btn btn-success d-flex align-items-center mx-2 btn-sm" asp-controller="Schedule" asp-action="GetCustomerSchedules" asp-route-customerId="@customerId">
+                        Danh sách lịch hẹn
+                    </a>
+                    <a class="btn btn-secondary d-flex align-items-center mx-2 btn-sm" asp-controller="MedicalRecord" asp-action="MedicalRecordOfCustomer" asp-route-customerId="@customerId">
+                        Hồ sơ bệnh án
+                    </a>
+                    <a class="btn btn-secondary d-flex align-items-center mx-2 btn-sm" asp-controller="CustomerCredit" asp-action="Index" asp-route-customerId="@customerId" class="btn btn-info">
+                        Nạp tiền
+                    </a>
+                }
+                else if (User.IsInRole("Dentist"))
+                {
+                    var dentist = await UserManager.GetUserAsync(User);
+                    var dentistId = (await DentistRepository.GetDentistByAccountAsync(dentist)).Id;
+                    <a class="btn btn-success d-flex align-items-center mx-2 btn-sm" asp-controller="Schedule" asp-action="ListAppointmentSchedules" asp-route-dentistId="@dentistId" class="btn btn-info">
+                        Xem danh sách lịch hẹn
+                    </a>
+
+                    <a class="btn btn-success d-flex align-items-center mx-2 btn-sm" asp-controller="MedicalRecord" asp-action="Index" asp-route-dentistId="@dentistId" class="btn btn-info">
+                        Hồ sơ bệnh nhân
+                    </a>
+                }
+                else if (User.IsInRole("Employee"))
+                {
+                    <a class="btn btn-success d-flex align-items-center mx-2 btn-sm" asp-controller="MedicalRecord" asp-action="Index" class="btn btn-info">
+                        Hồ sơ bệnh nhân
+                    </a>
+                    <a class="btn btn-success d-flex align-items-center mx-2 btn-sm" asp-controller="Payment" asp-action="Index" class="dropdown-toggle no-arrow">
+                        Thanh Toán
+                    </a>
+                    <a class="btn btn-success d-flex align-items-center mx-2 btn-sm" asp-controller="Payment" asp-action="CreateSchedule" class="dropdown-toggle no-arrow">
+                        Lập Lịch Khách Hàng
+                    </a>
+                }
+            }
+            
+            @if (SignInManager.IsSignedIn(User))
+            {
+                    @if (!User.IsInRole("Admin"))
+                    {
+                        <a class="btn btn-primary mx-2 btn-sm" asp-controller="Account" asp-action="EditProfile" asp-route-username="@User.Identity.Name">Tài khoản</a>
+                    }
+                    <form asp-controller="Account" asp-action="Logout" method="post">
+                        <button type="submit" class="btn btn-success mx-2 btn-sm">Đăng xuất</button>
+                    </form>
+                    @if (User.IsInRole("Customer"))
+                    {
+                        var customer = await UserManager.GetUserAsync(User);
+                        var customerId = (await CustomerRepository.GetCustomerByAccountAsync(customer)).Id;
+                        var balance = await CreditRepository.GetBalance(customerId);
+                        <div class="badge bg-warning">Số dư: @balance.ToString("#,##0") VNĐ</div>
+                    }
+  
+            }
+            else
+            {
+                    <a class="btn btn-success d-flex align-items-center mx-2 btn-sm" asp-controller="Account" asp-action="Login">
+                        Đăng nhập
+                    </a>
+                    <a class="btn btn-success d-flex align-items-center mx-2 btn-sm" asp-controller="Account" asp-action="Register">
+                        Đăng ký
+                    </a>
+                    
+            }
+        </div>
+        
+    </div>
+
+    <div class="mobile-menu-overlay"></div>
+
+    <div class="main-container">
+        <div class="pd-ltr-20">
+            <div class="card-box pd-20 height-100-p mb-30">
+                @RenderBody()
+            </div>
+        </div>
+
+    </div>
+
+    <partial name="_ValidationScriptsPartial" />
+    <!-- js -->
+    <script src="~/vendors/scripts/core.js"></script>
+    <script src="~/vendors/scripts/script.min.js"></script>
+    <script src="~/vendors/scripts/process.js"></script>
+    <script src="~/vendors/scripts/layout-settings.js"></script>
+
+    <script src="~/src/plugins/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/src/plugins/datatables/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/src/plugins/datatables/js/dataTables.responsive.min.js"></script>
+    <script src="~/src/plugins/datatables/js/responsive.bootstrap4.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

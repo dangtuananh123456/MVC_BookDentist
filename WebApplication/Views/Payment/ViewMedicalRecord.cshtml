@@ -1,0 +1,15 @@
+﻿@using DataModels
+@model MedicalRecord;
+
+@{
+    ViewData["title"] = "View medical Record";
+}
+
+<div data-id ="@Model.Id">
+    <div><b>CustomerId : </b>@Model.CustomerId</div>
+    <div><b>Sequence Number: </b>@Model.SequenceNumber</div>
+    <div><b>Name Service : </b>@Model.Service</div>
+    <div><b>ServicePrice : </b>@Model.ServicePrice</div>
+    <div><b>Examination Date : </b>@Model.ExaminationDate</div>
+</div>
+<a asp-action="Bill" asp-route-id ="@Model.CustomerId" type ="button" class="btn btn-warning"></a>
